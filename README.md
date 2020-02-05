@@ -5,11 +5,13 @@
 [![License](https://poser.pugx.org/trikoder/oauth2-bundle/license)](https://packagist.org/packages/trikoder/oauth2-bundle)
 [![Code coverage](https://codecov.io/gh/trikoder/oauth2-bundle/branch/master/graph/badge.svg)](https://codecov.io/gh/trikoder/oauth2-bundle)
 
+Edited by mumy81
+
 Symfony bundle which provides OAuth 2.0 authorization/resource server capabilities. The authorization and resource server actors are implemented using the [thephpleague/oauth2-server](https://github.com/thephpleague/oauth2-server) library.
 
 ## Important notes
 
-This bundle provides the "glue" between  [thephpleague/oauth2-server](https://github.com/thephpleague/oauth2-server) library and Symfony.
+This bundle provides the "glue" between [thephpleague/oauth2-server](https://github.com/thephpleague/oauth2-server) library and Symfony.
 It implements [thephpleague/oauth2-server](https://github.com/thephpleague/oauth2-server) library in a way specified by its official documentation.
 For implementation into Symfony project, please see [bundle documentation](docs/basic-setup.md) and official [Symfony security documentation](https://symfony.com/doc/current/security.html).
 
@@ -19,15 +21,15 @@ This package is currently in the active development.
 
 ## Features
 
-* API endpoint for client authorization and token issuing
-* Configurable client and token persistance (includes [Doctrine](https://www.doctrine-project.org/) support)
-* Integration with Symfony's [Security](https://symfony.com/doc/current/security.html) layer
+-   API endpoint for client authorization and token issuing
+-   Configurable client and token persistance (includes [Doctrine](https://www.doctrine-project.org/) support)
+-   Integration with Symfony's [Security](https://symfony.com/doc/current/security.html) layer
 
 ## Requirements
 
-* [PHP 7.2](http://php.net/releases/7_2_0.php) or greater
-* [Symfony 4.2](https://symfony.com/roadmap/4.2) or [Symfony 3.4](https://symfony.com/roadmap/3.4)
-* [league/oauth2-server (versions >=7.2.0 <8.0)](https://packagist.org/packages/league/oauth2-server)
+-   [PHP 7.2](http://php.net/releases/7_2_0.php) or greater
+-   [Symfony 4.2](https://symfony.com/roadmap/4.2) or [Symfony 3.4](https://symfony.com/roadmap/3.4)
+-   [league/oauth2-server (versions >=7.2.0 <8.0)](https://packagist.org/packages/league/oauth2-server)
 
 ## Installation
 
@@ -46,32 +48,31 @@ This package is currently in the active development.
     ```yaml
     trikoder_oauth2:
         authorization_server: # Required
-
             # Full path to the private key file.
             # How to generate a private key: https://oauth2.thephpleague.com/installation/#generating-public-and-private-keys
-            private_key:          ~ # Required, Example: /var/oauth/private.key
+            private_key: ~ # Required, Example: /var/oauth/private.key
 
             # Passphrase of the private key, if any
             private_key_passphrase: null
 
             # The plain string or the ascii safe string used to create a Defuse\Crypto\Key to be used as an encryption key.
             # How to generate an encryption key: https://oauth2.thephpleague.com/installation/#string-password
-            encryption_key:       ~ # Required
+            encryption_key: ~ # Required
 
             # The type of value of 'encryption_key'
-            encryption_key_type:  plain # One of "plain"; "defuse"
+            encryption_key_type: plain # One of "plain"; "defuse"
 
             # How long the issued access token should be valid for.
             # The value should be a valid interval: http://php.net/manual/en/dateinterval.construct.php#refsect1-dateinterval.construct-parameters
-            access_token_ttl:     PT1H
+            access_token_ttl: PT1H
 
             # How long the issued refresh token should be valid for.
             # The value should be a valid interval: http://php.net/manual/en/dateinterval.construct.php#refsect1-dateinterval.construct-parameters
-            refresh_token_ttl:    P1M
+            refresh_token_ttl: P1M
 
             # How long the issued auth code should be valid for.
             # The value should be a valid interval: http://php.net/manual/en/dateinterval.construct.php#refsect1-dateinterval.construct-parameters
-            auth_code_ttl:        PT10M
+            auth_code_ttl: PT10M
 
             # Whether to enable the client credentials grant
             enable_client_credentials_grant: true
@@ -87,30 +88,28 @@ This package is currently in the active development.
 
             # Whether to enable the implicit grant
             enable_implicit_grant: true
-        resource_server:      # Required
-
+        resource_server: # Required
             # Full path to the public key file
             # How to generate a public key: https://oauth2.thephpleague.com/installation/#generating-public-and-private-keys
-            public_key:           ~ # Required, Example: /var/oauth/public.key
+            public_key: ~ # Required, Example: /var/oauth/public.key
 
         # Scopes that you wish to utilize in your application.
         # This should be a simple array of strings.
-        scopes:               []
+        scopes: []
 
         # Configures different persistence methods that can be used by the bundle for saving client and token data.
         # Only one persistence method can be configured at a time.
-        persistence:          # Required
+        persistence: # Required
             doctrine:
-
                 # Name of the entity manager that you wish to use for managing clients and tokens.
-                entity_manager:       default
-            in_memory:            ~
+                entity_manager: default
+            in_memory: ~
 
         # The priority of the event listener that converts an Exception to a Response
         exception_event_listener_priority: 10
 
         # Set a custom prefix that replaces the default 'ROLE_OAUTH2_' role prefix
-        role_prefix:          ROLE_OAUTH2_
+        role_prefix: ROLE_OAUTH2_
     ```
 
 1. Enable the bundle in `config/bundles.php` by adding it to the array:
@@ -129,7 +128,7 @@ This package is currently in the active development.
 
     ```yaml
     oauth2:
-        resource: '@TrikoderOAuth2Bundle/Resources/config/routes.xml'
+        resource: "@TrikoderOAuth2Bundle/Resources/config/routes.xml"
     ```
 
 You can verify that everything is working by issuing a `POST` request to the `/token` endpoint.
@@ -146,9 +145,9 @@ security:
 
 ## Configuration
 
-* [Basic setup](docs/basic-setup.md)
-* [Controlling token scopes](docs/controlling-token-scopes.md)
-* [Password grant handling](docs/password-grant-handling.md)
+-   [Basic setup](docs/basic-setup.md)
+-   [Controlling token scopes](docs/controlling-token-scopes.md)
+-   [Password grant handling](docs/password-grant-handling.md)
 
 ## Development
 

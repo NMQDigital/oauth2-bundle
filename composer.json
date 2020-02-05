@@ -10,14 +10,14 @@
         "email": "petar.obradovic@trikoder.net"
     }],
     "repositories": [{
-        "type": "vcs",
+        "type": "git",
         "url": "https://github.com/NMQDigital/oauth2-server"
     }],
     "require": {
         "php": ">=7.2",
         "doctrine/doctrine-bundle": "^1.8|^2.0",
         "doctrine/orm": "^2.6",
-        "league/oauth2-server": "dev-7.3.x-edit",
+        "league/oauth2-server": "7.3.x-edit",
         "psr/http-factory": "^1.0",
         "sensio/framework-extra-bundle": "^5.3",
         "symfony/framework-bundle": "^3.4|^4.2",

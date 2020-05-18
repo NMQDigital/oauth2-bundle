@@ -24,11 +24,33 @@ final class ListClientsCommandTest extends AbstractAcceptanceTest
             'command' => $command->getName(),
         ]);
         $output = $commandTester->getDisplay();
-        $expected = <<<TABLE
+        $expected = <<<'TABLE'
  ------------ -------- ------- -------------- ------------ 
   identifier   secret   scope   redirect uri   grant type  
  ------------ -------- ------- -------------- ------------ 
   foobar       quzbaz                                      
+ ------------ -------- ------- -------------- ------------
+TABLE;
+
+        $this->assertEquals(trim($expected), trim($output));
+    }
+
+    public function testListClientsWithClientHavingNoSecret(): void
+    {
+        $client = $this->fakeAClient('foobar', null);
+        $this->getClientManager()->save($client);
+
+        $command = $this->command();
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+        ]);
+        $output = $commandTester->getDisplay();
+        $expected = <<<'TABLE'
+ ------------ -------- ------- -------------- ------------ 
+  identifier   secret   scope   redirect uri   grant type  
+ ------------ -------- ------- -------------- ------------ 
+  foobar                                                   
  ------------ -------- ------- -------------- ------------
 TABLE;
 
@@ -43,7 +65,7 @@ TABLE;
             'command' => $command->getName(),
         ]);
         $output = $commandTester->getDisplay();
-        $expected = <<<TABLE
+        $expected = <<<'TABLE'
  ------------ -------- ------- -------------- ------------ 
   identifier   secret   scope   redirect uri   grant type  
  ------------ -------- ------- -------------- ------------
@@ -79,7 +101,7 @@ TABLE;
         ]);
         $output = $commandTester->getDisplay();
 
-        $expected = <<<TABLE
+        $expected = <<<'TABLE'
  ------------ -------------------------------- 
   identifier   scope                           
  ------------ -------------------------------- 
@@ -110,7 +132,7 @@ TABLE;
         ]);
         $output = $commandTester->getDisplay();
 
-        $expected = <<<TABLE
+        $expected = <<<'TABLE'
  ------------ ----------------- ---------------- -------------- ------------ 
   identifier   secret            scope            redirect uri   grant type  
  ------------ ----------------- ---------------- -------------- ------------ 

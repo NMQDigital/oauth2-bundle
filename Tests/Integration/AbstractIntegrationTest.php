@@ -99,6 +99,11 @@ abstract class AbstractIntegrationTest extends TestCase
     private $psrFactory;
 
     /**
+     * @var bool
+     */
+    private $requireCodeChallengeForPublicClients = true;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp(): void
@@ -251,6 +256,16 @@ abstract class AbstractIntegrationTest extends TestCase
         return $data;
     }
 
+    protected function enableRequireCodeChallengeForPublicClients(): void
+    {
+        $this->requireCodeChallengeForPublicClients = true;
+    }
+
+    protected function disableRequireCodeChallengeForPublicClients(): void
+    {
+        $this->requireCodeChallengeForPublicClients = false;
+    }
+
     private function createAuthorizationServer(
         ScopeRepositoryInterface $scopeRepository,
         ClientRepositoryInterface $clientRepository,
@@ -267,10 +282,16 @@ abstract class AbstractIntegrationTest extends TestCase
             TestHelper::ENCRYPTION_KEY
         );
 
+        $authCodeGrant = new AuthCodeGrant($authCodeRepository, $refreshTokenRepository, new DateInterval('PT10M'));
+
+        if (!$this->requireCodeChallengeForPublicClients) {
+            $authCodeGrant->disableRequireCodeChallengeForPublicClients();
+        }
+
         $authorizationServer->enableGrantType(new ClientCredentialsGrant());
         $authorizationServer->enableGrantType(new RefreshTokenGrant($refreshTokenRepository));
         $authorizationServer->enableGrantType(new PasswordGrant($userRepository, $refreshTokenRepository));
-        $authorizationServer->enableGrantType(new AuthCodeGrant($authCodeRepository, $refreshTokenRepository, new DateInterval('PT10M')));
+        $authorizationServer->enableGrantType($authCodeGrant);
         $authorizationServer->enableGrantType(new ImplicitGrant(new DateInterval('PT10M')));
 
         return $authorizationServer;

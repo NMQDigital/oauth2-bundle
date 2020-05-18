@@ -16,7 +16,7 @@ final class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder(): TreeBuilder
     {
-        $treeBuilder = $this->getWrappedTreeBuilder('trikoder_oauth2');
+        $treeBuilder = new TreeBuilder('trikoder_oauth2');
         $rootNode = $treeBuilder->getRootNode();
 
         $rootNode->append($this->createAuthorizationServerNode());
@@ -42,7 +42,7 @@ final class Configuration implements ConfigurationInterface
 
     private function createAuthorizationServerNode(): NodeDefinition
     {
-        $treeBuilder = $this->getWrappedTreeBuilder('authorization_server');
+        $treeBuilder = new TreeBuilder('authorization_server');
         $node = $treeBuilder->getRootNode();
 
         $node
@@ -99,6 +99,10 @@ final class Configuration implements ConfigurationInterface
                     ->info('Whether to enable the authorization code grant')
                     ->defaultTrue()
                 ->end()
+                ->booleanNode('require_code_challenge_for_public_clients')
+                    ->info('Whether to require code challenge for public clients for the auth code grant')
+                    ->defaultTrue()
+                ->end()
                 ->booleanNode('enable_implicit_grant')
                     ->info('Whether to enable the implicit grant')
                     ->defaultTrue()
@@ -111,7 +115,7 @@ final class Configuration implements ConfigurationInterface
 
     private function createResourceServerNode(): NodeDefinition
     {
-        $treeBuilder = $this->getWrappedTreeBuilder('resource_server');
+        $treeBuilder = new TreeBuilder('resource_server');
         $node = $treeBuilder->getRootNode();
 
         $node
@@ -131,7 +135,7 @@ final class Configuration implements ConfigurationInterface
 
     private function createScopesNode(): NodeDefinition
     {
-        $treeBuilder = $this->getWrappedTreeBuilder('scopes');
+        $treeBuilder = new TreeBuilder('scopes');
         $node = $treeBuilder->getRootNode();
 
         $node
@@ -145,7 +149,7 @@ final class Configuration implements ConfigurationInterface
 
     private function createPersistenceNode(): NodeDefinition
     {
-        $treeBuilder = $this->getWrappedTreeBuilder('persistence');
+        $treeBuilder = new TreeBuilder('persistence');
         $node = $treeBuilder->getRootNode();
 
         $node
@@ -170,28 +174,5 @@ final class Configuration implements ConfigurationInterface
         ;
 
         return $node;
-    }
-
-    private function getWrappedTreeBuilder(string $name): TreeBuilder
-    {
-        return new class($name) extends TreeBuilder {
-            public function __construct(string $name)
-            {
-                // Compatibility path for Symfony 3.4
-                if (!method_exists(TreeBuilder::class, 'getRootNode')) {
-                    $this->root($name);
-                }
-
-                // Compatibility path for Symfony 4.2+
-                if (method_exists(TreeBuilder::class, '__construct')) {
-                    parent::__construct($name);
-                }
-            }
-
-            public function getRootNode(): NodeDefinition
-            {
-                return $this->root;
-            }
-        };
     }
 }

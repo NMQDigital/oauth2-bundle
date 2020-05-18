@@ -10,8 +10,17 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 final class OAuth2Token extends AbstractToken
 {
-    public function __construct(ServerRequestInterface $serverRequest, ?UserInterface $user, string $rolePrefix)
-    {
+    /**
+     * @var string
+     */
+    private $providerKey;
+
+    public function __construct(
+        ServerRequestInterface $serverRequest,
+        ?UserInterface $user,
+        string $rolePrefix,
+        string $providerKey
+    ) {
         $this->setAttribute('server_request', $serverRequest);
         $this->setAttribute('role_prefix', $rolePrefix);
 
@@ -25,6 +34,8 @@ final class OAuth2Token extends AbstractToken
         }
 
         parent::__construct(array_unique($roles));
+
+        $this->providerKey = $providerKey;
     }
 
     /**
@@ -35,13 +46,29 @@ final class OAuth2Token extends AbstractToken
         return $this->getAttribute('server_request')->getAttribute('oauth_access_token_id');
     }
 
+    public function getProviderKey(): string
+    {
+        return $this->providerKey;
+    }
+
+    public function __serialize(): array
+    {
+        return [$this->providerKey, parent::__serialize()];
+    }
+
+    public function __unserialize(array $data): void
+    {
+        [$this->providerKey, $parentData] = $data;
+        parent::__unserialize($parentData);
+    }
+
     private function buildRolesFromScopes(): array
     {
         $prefix = $this->getAttribute('role_prefix');
         $roles = [];
 
         foreach ($this->getAttribute('server_request')->getAttribute('oauth_scopes', []) as $scope) {
-            $roles[] = trim(strtoupper($prefix . $scope));
+            $roles[] = strtoupper(trim($prefix . $scope));
         }
 
         return $roles;

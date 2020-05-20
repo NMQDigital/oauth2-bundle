@@ -9,10 +9,13 @@ use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use Trikoder\Bundle\OAuth2Bundle\Converter\ScopeConverterInterface;
+use Trikoder\Bundle\OAuth2Bundle\Event\AccessTokenIssueEvent;
 use Trikoder\Bundle\OAuth2Bundle\League\Entity\AccessToken as AccessTokenEntity;
 use Trikoder\Bundle\OAuth2Bundle\Manager\AccessTokenManagerInterface;
 use Trikoder\Bundle\OAuth2Bundle\Manager\ClientManagerInterface;
 use Trikoder\Bundle\OAuth2Bundle\Model\AccessToken as AccessTokenModel;
+use Trikoder\Bundle\OAuth2Bundle\OAuth2Events;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 final class AccessTokenRepository implements AccessTokenRepositoryInterface
 {
@@ -31,14 +34,21 @@ final class AccessTokenRepository implements AccessTokenRepositoryInterface
      */
     private $scopeConverter;
 
+    /**
+     * @var EventDispatcherInterface
+     */
+    private $eventDispatcher;
+
     public function __construct(
         AccessTokenManagerInterface $accessTokenManager,
         ClientManagerInterface $clientManager,
-        ScopeConverterInterface $scopeConverter
+        ScopeConverterInterface $scopeConverter,
+        EventDispatcherInterface $eventDispatcher
     ) {
         $this->accessTokenManager = $accessTokenManager;
         $this->clientManager = $clientManager;
         $this->scopeConverter = $scopeConverter;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -48,6 +58,21 @@ final class AccessTokenRepository implements AccessTokenRepositoryInterface
     {
         $accessToken = new AccessTokenEntity();
         $accessToken->setClient($clientEntity);
+
+        $client = $this->clientManager->find($clientEntity->getIdentifier());
+
+        $event = $this->eventDispatcher->dispatch(
+            new AccessTokenIssueEvent(
+                $client,
+                $userIdentifier
+            ),
+            OAuth2Events::ACCESS_TOKEN_ISSUE
+        );
+
+        if ($event->hasExtraData()) {
+            $accessToken->setExtraData($event->getExtraData());
+        }
+
         $accessToken->setUserIdentifier($userIdentifier);
 
         foreach ($scopes as $scope) {

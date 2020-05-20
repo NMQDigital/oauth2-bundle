@@ -30,4 +30,11 @@ final class OAuth2Events
      * must be redirected to resolve the authorization request.
      */
     public const AUTHORIZATION_REQUEST_RESOLVE = 'trikoder.oauth2.authorization_request_resolve';
+
+    /**
+     * The ACCESS_TOKEN_ISSUE event occurrs when the the authorization server issued new access token.
+     *
+     * You should set a valid extra data here if applicable.
+     */
+    public const ACCESS_TOKEN_ISSUE = 'trikoder.oauth2.access_token_issue';
 }

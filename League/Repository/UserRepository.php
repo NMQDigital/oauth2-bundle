@@ -69,34 +69,4 @@ final class UserRepository implements UserRepositoryInterface
 
         return $this->userConverter->toLeague($user);
     }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getUserByUserCredentials(
-        $username,
-        $password,
-        $grantType,
-        ClientEntityInterface $clientEntity
-    ) {
-        $client = $this->clientManager->find($clientEntity->getIdentifier());
-
-        $event = $this->eventDispatcher->dispatch(
-            OAuth2Events::USER_RESOLVE,
-            new UserResolveEvent(
-                $username,
-                $password,
-                new GrantModel($grantType),
-                $client
-            )
-        );
-
-        $user = $event->getUser();
-
-        if (null === $user) {
-            return null;
-        }
-
-        return $user;
-    }
 }
